@@ -29,6 +29,6 @@ To creat the MIXER dataset, I used the data-preparation code at https://github.c
 
 ```bash prepareData.sh```
 
-This will create a directory MT/prep/, which will contain the original train, val, and test files, as well as files suffixed with '.wmixerprep'. These *.wmixerprep files put unks in the same place as MIXER does internally, and these should be used for training. Final results should use the non-*.wmixerprep files.
+This will create a directory MT/prep/, which will contain the original train, val, and test files, as well as files suffixed with '.wmixerprep'. These \*.wmixerprep files put unks in the same place as MIXER does internally, and these should be used for training. Final results should use the non-*.wmixerprep files.
 
 
