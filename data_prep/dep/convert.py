@@ -7,7 +7,7 @@ from nltk.parse.transitionparser import TransitionParser, Transition, Configurat
 
 data = [] 
 parse = ""
-for l in open("CoNLL2009-ST-English-development.conll.txt"):
+for l in open(sys.argv[1]):
     if not l.strip(): 
         data.append(parse)
         parse = ""
@@ -106,6 +106,6 @@ class MyTransitionParser(TransitionParser):
 
 
 
-MyTransitionParser(TransitionParser.ARC_STANDARD)._create_training_examples_arc_std(d, open("/tmp/q", "w"))
+MyTransitionParser(TransitionParser.ARC_STANDARD)._create_training_examples_arc_std(d, open("/tmp/targetparses.txt", "w"))
 
 #java -cp stanford-parser-3.3.0.jar edu.stanford.nlp.trees.EnglishGrammaticalStructure -treeFile  ~/Projects/group/data/wsj/test.txt     -conllx -basic > test.conll.txt

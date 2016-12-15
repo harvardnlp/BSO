@@ -157,7 +157,7 @@ local function get_source_indices(sent, dict)
 end
 
 
--- supposed to be the same as getting src (and targ) indices, but writes shit
+-- supposed to be the same as getting src (and targ) indices, but just writes words
 local function just_write_words(sent, dict, outfi)
     -- remove extra white spaces
     local clean_sent = cleanup_sentence(sent)
@@ -169,7 +169,7 @@ local function just_write_words(sent, dict, outfi)
         if word ~= "" then
             if wrote_a_word then
               outfi:write(' ')
-            else          
+            else
               wrote_a_word = true
             end
             local wid = dict.symbol_to_index[word]
@@ -183,8 +183,6 @@ local function just_write_words(sent, dict, outfi)
     end
     outfi:write('\n')
 end
-
-
 
 -- map target sentence words to id vector
 local function get_target_indices(sent, dict, sidx)
@@ -382,7 +380,7 @@ function wordTokenizer.tokenize(config, dtype, tdict, sdict, shuff)
 end
 
 
--- this is gonna output words so we can use our own batching shit
+-- this is gonna output words so we can use our own batching code
 function wordTokenizer.mytokenize(config, dtype, tdict, sdict, shuff)
     local tfile = paths.concat(config.root_path, config.targets[dtype])
     local sfile = paths.concat(config.root_path, config.sources[dtype])
@@ -437,32 +435,6 @@ function wordTokenizer.mytokenize(config, dtype, tdict, sdict, shuff)
     print('Number of sentences: ' .. target_sent_ctr)
     print('Max target sentence length: ' .. max_target_len)
 
---    -- create the bins and their info
---    local bins = {} -- each element has size, targets, sources, toffset, soffset
---    bins.data = {}
---    bins.nbins = 0
---    -- loop over the source sentences to get bin sizes
---    for i = 1, source_sent_ctr do
---        local slen = source_sent_len[i]
---        if bins.data[slen] == nil then
---            bins.nbins = bins.nbins + 1
---            bins.data[slen] = {}
---            bins.data[slen].size = 1
---        else
---            bins.data[slen].size = bins.data[slen].size + 1
---        end
---    end
-
-    -- populate the bins to store the actual source and target word indices
---    for bin_dim, bin in pairs(bins.data) do
---        local bin_size = bin.size
---        local target_tensor_len = max_target_len * bin_size
---        bin.sources = torch.LongTensor(bin_size, bin_dim):zero()
---        bin.soffset = 0
---        bin.targets = torch.LongTensor(target_tensor_len, 3):zero()
---        bin.toffset = 1
---    end
-
     collectgarbage()
     collectgarbage()
 
@@ -481,8 +453,8 @@ function wordTokenizer.mytokenize(config, dtype, tdict, sdict, shuff)
 
     --print('-- Populate bins')
     -- now loop over the sentences (source and target) and populate the bins
-    local src_outfi = io.open(sfile .. '.moar', 'w')
-    local targ_outfi = io.open(tfile .. '.moar', 'w')
+    local src_outfi = io.open(sfile .. '.wmixerprep', 'w')
+    local targ_outfi = io.open(tfile .. '.wmixerprep', 'w')
     local nsrc_unk = 0
     local ntgt_unk = 0
     local nsrc = 0
@@ -496,53 +468,13 @@ function wordTokenizer.mytokenize(config, dtype, tdict, sdict, shuff)
         local curr_source_sent = source_sent_data[idx]
         local curr_target_sent = target_sent_data[idx]
         local bnum = source_sent_len[idx]
-        --local curr_bin = bins.data[bnum]
-        --curr_bin.soffset = curr_bin.soffset + 1
-        
-        
 
-        --local curr_source_ids, ssize, nus =
-        --    get_source_indices(curr_source_sent, sdict)
         just_write_words(curr_source_sent, sdict, src_outfi)
-        --local curr_target_ids, tsize, nut =
-        --    get_target_indices(curr_target_sent, tdict, curr_bin.soffset)
         just_write_words(curr_target_sent, tdict, targ_outfi)
---        nsrc = nsrc + ssize
---        ntgt = ntgt + tsize
---        nsrc_unk = nsrc_unk + nus
---        ntgt_unk = ntgt_unk + nut
-
---        -- load the indices into appropriate bins
---        curr_bin.sources:select(1,curr_bin.soffset):copy(curr_source_ids)
---        curr_bin.targets:narrow(1,curr_bin.toffset,tsize):copy(curr_target_ids)
---        curr_bin.toffset = curr_bin.toffset + tsize
   end
   src_outfi:close()
   targ_outfi:close()
 
---    collectgarbage()
---    collectgarbage()
-
---    -- resize the bins.targets: yet to be done
---    for bin_dim, bin in pairs(bins.data) do
---        bin.targets = bin.targets:narrow(1,1,bin.toffset-1):clone()
---    end
-
---    -- finally collect all the binned source and target sentences
---    local sources = {}
---    local targets = {}
---    for bin_dim, bin in pairs(bins.data) do
---        sources[bin_dim] = bin.sources
---        targets[bin_dim] = bin.targets
---    end
-
---    -- note unk rates affected by seos
---    print(string.format('nlines: %d, ntokens (src: %d, tgt: %d); ' ..
---                           'UNK (src: %.2f%%, tgt: %.2f%%)',
---                           target_sent_ctr, nsrc, ntgt, nsrc_unk/nsrc*100,
---                           ntgt_unk/ntgt*100))
-
---    return targets, sources
 end
 
 
