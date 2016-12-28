@@ -39,3 +39,5 @@ This will create a directory MT/prep/, which will contain the original train, va
 
 As above, preproc_pp.py can be used to form hdf5 tensors from the text data. No words should be replaced with UNK (since the preprocessing already did this), and no sentences should be discarded.
 
+## Notes
+preproc_pp.py is a very slight modification of [Yoon Kim's preprocessing script](https://github.com/harvardnlp/seq2seq-attn/blob/master/preprocess.py) .
