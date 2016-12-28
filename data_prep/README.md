@@ -20,6 +20,12 @@ This will write a file to /tmp/targetparses.txt.
 
 This will create files /tmp/src-targetparses.txt and /tmp/targ-targetparses.txt .
 
+- If interested, you can create hdf5 tensors (which bso_train.lua consumes) in the following way:
+
+```python preproc_pp.py --srcfile src-targetparses.txt --targetfile targ-targetparses.txt --srcvalfile src-targetparses_val.txt --targetvalfile targ-targetparses_val.txt --outputfile dep/dep --seqlength 283 --srcminfreq 2 ```
+
+This will replace any tokens occuring fewer than twice with an UNK token. The "--seqlength 283" argument just happens to be the length of the longest target sequence; no sentences should be discarded.
+
 - To obtain CONLL format files from predicted target sequences, use dep/convert_back_noroot.py, e.g.,
 
 ```python convert_back_noroot.py < dev-preds.out > dev-preds.out.conll```
@@ -31,4 +37,5 @@ To creat the MIXER dataset, I used the data-preparation code at https://github.c
 
 This will create a directory MT/prep/, which will contain the original train, val, and test files, as well as files suffixed with '.wmixerprep'. These \*.wmixerprep files put unks in the same place as MIXER does internally, and these should be used for training. Final results should use the non-*.wmixerprep files.
 
+As above, preproc_pp.py can be used to form hdf5 tensors from the text data. No words should be replaced with UNK (since the preprocessing already did this), and no sentences should be discarded.
 
