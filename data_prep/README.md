@@ -1,6 +1,3 @@
-## Creating the Word-ordering Dataset
-I'm waiting for permission to upload files/scripts...will update soon!
-
 ## Creating the Dependency Parsing Dataset
 Please follow these steps to recreate the dependency parsing dataset:
 
@@ -29,6 +26,11 @@ This will replace any tokens occuring fewer than twice with an UNK token. The "-
 - To obtain CONLL format files from predicted target sequences, use dep/convert_back_noroot.py, e.g.,
 
 ```python convert_back_noroot.py < dev-preds.out > dev-preds.out.conll```
+
+
+## Creating the Word-ordering Dataset
+Use Allen Schmaltz's data generation [script](https://github.com/allenschmaltz/word_ordering/tree/master/data/preprocessing) (with instructions [here](https://github.com/allenschmaltz/word_ordering/tree/master/data/preprocessing)). The only files needed are ```${splitname}_words_fullyshuffled_no_eos.txt``` (which is the source), and ```${splitname}_words_no_eos.txt``` (which is the target), and so the script may be edited to produce only these. The script creates files with unk's already substituted and so preproc.py should not do any unk replacement. See instructions [here](https://github.com/allenschmaltz/word_ordering/blob/master/Usage.txt) for randomly replacing unks and evaluating at test time.
+
 
 ## Creating the MT Dataset
 To creat the MIXER dataset, I used the data-preparation code at https://github.com/facebookresearch/MIXER, but modified it to output text files (which the BSO code consumes), rather than torch Tensors. The modified files (prepareData.sh, makedata.lua, and tokenizer.lua) are in the MT/ directory, and you should be able to just run:
